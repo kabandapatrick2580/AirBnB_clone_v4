@@ -1,7 +1,7 @@
 #!/usr/bin/python3
-""" Starts a Flask Web Application """
+""" Starts a Flash Web Application """
+# The shebang line specifies the interpreter to use for this script.
 
-# Import necessary modules and classes from the project
 from models import storage
 from models.state import State
 from models.city import City
@@ -11,8 +11,9 @@ from os import environ
 from flask import Flask, render_template
 import uuid
 
-# Create a Flask web application
+# Create a Flask web application instance
 app = Flask(__name__)
+
 # Uncomment the lines below to configure Jinja template options
 # app.jinja_env.trim_blocks = True
 # app.jinja_env.lstrip_blocks = True
@@ -23,19 +24,18 @@ def close_db(error):
     """ Remove the current SQLAlchemy Session """
     storage.close()
 
-# Define a route for the '/0-hbnb/' endpoint
-@app.route('/0-hbnb/', strict_slashes=False)
+# Define a route for the '/1-hbnb/' endpoint (changed from '/0-hbnb/')
+@app.route('/1-hbnb/', strict_slashes=False)
 def hbnb():
     """ HBNB is alive! """
-
     # Retrieve all states from the storage and sort them alphabetically
     states = storage.all(State).values()
     states = sorted(states, key=lambda k: k.name)
-    st_ct = []
+    strict = []
 
     # Create a list of states and their corresponding cities, sorted alphabetically
     for state in states:
-        st_ct.append([state, sorted(state.cities, key=lambda k: k.name)])
+        strict.append([state, sorted(state.cities, key=lambda k: k.name)])
 
     # Retrieve all amenities from the storage and sort them alphabetically
     amenities = storage.all(Amenity).values()
@@ -44,13 +44,13 @@ def hbnb():
     # Retrieve all places from the storage and sort them alphabetically
     places = storage.all(Place).values()
     places = sorted(places, key=lambda k: k.name)
-
+    
     # Generate a random UUID as a cache identifier
     cached_id = uuid.uuid4()
 
     # Render the '0-hbnb.html' template with the data obtained above
     return render_template('0-hbnb.html',
-                           states=st_ct,
+                           states=strict,
                            amenities=amenities,
                            places=places,
                            cache_id=cached_id)
